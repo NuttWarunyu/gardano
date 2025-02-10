@@ -14,5 +14,8 @@ RUN python3 -m pip install -r /app/requirements.txt
 # คัดลอกโค้ดทั้งหมดไปยัง Container
 COPY backend /app
 
-# รันแอปพลิเคชัน
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+# เปิดพอร์ต 8000 สำหรับแอป
+EXPOSE 8000
+
+# ใช้ `PORT` จาก Railway ถ้ามีค่าเข้ามา
+CMD ["sh", "-c", "uvicorn main:app --host 0.0.0.0 --port ${PORT:-8000}"]
