@@ -3,7 +3,7 @@ aiohttp
 aiosignal 
 amqp 
 annotated-types 
-anyio .post1
+anyio 
 appnope 
 argon2-cffi 
 argon2-cffi-bindings 
@@ -105,7 +105,7 @@ opencv-python
 opencv-python-headless 
 openpyxl 
 orjson 
-outcome .post0
+outcome 
 overrides 
 packaging 
 pandas 
@@ -130,7 +130,7 @@ pydantic_core
 Pygments 
 pyparsing 
 PySocks 
-python-dateutil .post0
+python-dateutil 
 python-dotenv 
 python-json-logger 
 python-multipart 
@@ -165,7 +165,7 @@ starlette
 sympy 
 termcolor 
 terminado 
-thop .post2209072238
+thop 
 tinycss2 
 torch 
 torchaudio 
