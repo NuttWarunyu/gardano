@@ -1,18 +1,12 @@
-# ใช้ Python 3.11 เป็น Base Image
-FROM python:3.11
+FROM python:3.9
 
-# ตั้งค่าตำแหน่งการทำงานของ Container
 WORKDIR /app
 
-# คัดลอกไฟล์จาก backend ไปยัง Container
-COPY backend/ /app/
+COPY requirements.txt /app/requirements.txt
 
-# ติดตั้ง Python Dependencies
-RUN pip install --upgrade pip
-RUN pip install -r requirements.txt
+RUN python3 -m pip install --upgrade pip
+RUN python3 -m pip install -r /app/requirements.txt
 
-# เปิดพอร์ตที่ต้องใช้ (เช่น 8000)
-EXPOSE 8000
+COPY . /app
 
-# คำสั่งสำหรับรัน FastAPI
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
