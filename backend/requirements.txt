@@ -94,7 +94,7 @@ nbclient==0.10.0
 nbconvert==7.16.4
 nbformat==5.10.4
 nest-asyncio==1.6.0
-networkx==3.4.2
+networkx>=3.2,<3.4
 notebook==7.2.2
 notebook_shim==0.2.4
 numpy==2.1.1
