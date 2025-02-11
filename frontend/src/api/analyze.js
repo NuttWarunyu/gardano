@@ -1,9 +1,11 @@
 export const analyzeImage = async (file) => {
+  const API_BASE_URL =
+    import.meta.env.VITE_API_BASE_URL || "https://gardano.onrender.com";
+
   const formData = new FormData();
   formData.append("file", file);
 
-  const response = await fetch("http://127.0.0.1:8000/api/analyze/", {
-    // ✅ เปลี่ยน URL ให้ถูกต้อง
+  const response = await fetch(`${API_BASE_URL}/api/analyze/`, {
     method: "POST",
     body: formData,
   });
