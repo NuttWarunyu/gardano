@@ -3,9 +3,9 @@ nixPkgs = ["python311"]
 
 [phases.build]
 cmds = [
-  "python3 -m pip install --upgrade pip",
-  "python3 -m pip install -r backend/requirements.txt"
+  "pip install --upgrade pip",
+  "pip install -r backend/requirements.txt"
 ]
 
 [start]
-cmd = "uvicorn backend.app.main:app --host 0.0.0.0 --port ${PORT}"
+cmd = "cd backend && uvicorn app.main:app --host 0.0.0.0 --port $PORT"
