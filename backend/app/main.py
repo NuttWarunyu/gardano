@@ -20,7 +20,10 @@ app = FastAPI()
 # ✅ เปิดให้ Frontend ใช้งาน API
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"], 
+    allow_origins=[
+        "http://localhost:5173",  
+        "https://gardano-frontend.onrender.com"  # ✅ เพิ่ม URL ของ frontend ที่ Render
+    ],  
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -29,3 +32,7 @@ app.add_middleware(
 # ✅ รวม API Routes
 app.include_router(analyze.router, prefix="/api")
 app.include_router(affiliate.router, prefix="/api")
+
+@app.get("/")
+def root():
+    return {"message": "🚀 Gardano API is running!"}
