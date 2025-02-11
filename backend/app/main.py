@@ -1,8 +1,18 @@
+import os
 import openai
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.config import OPENAI_API_KEY
 from app.routes import analyze, affiliate  # ✅ แยก Route ออกไป
+
+# ✅ ดึงค่า OPENAI_API_KEY จาก Environment Variables
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+
+# ✅ ตรวจสอบว่าค่าถูกต้องหรือไม่
+if not OPENAI_API_KEY:
+    raise ValueError("❌ ERROR: OPENAI_API_KEY is not set! Please check your environment variables.")
+
+# ✅ ตั้งค่า API Key ให้ OpenAI Client
+openai.api_key = OPENAI_API_KEY
 
 # ✅ สร้าง FastAPI App
 app = FastAPI()
