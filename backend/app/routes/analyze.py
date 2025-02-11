@@ -9,7 +9,21 @@ from app.database import get_plant_shop_data  # ✅ ดึงข้อมูล�
 shop_info = get_plant_shop_data()
 
 router = APIRouter()
-client = openai.OpenAI(api_key=OPENAI_API_KEY)
+
+import os
+import openai
+
+# ✅ ดึง API Key จาก Environment
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+
+if not OPENAI_API_KEY:
+    raise ValueError("❌ ERROR: OPENAI_API_KEY is not set! Please check your environment variables.")
+
+# ✅ ตั้งค่า API Key ให้ OpenAI Client
+openai.api_key = OPENAI_API_KEY
+
+# ✅ สร้าง OpenAI Client
+client = openai.OpenAI()
 
 @router.post("/analyze/")
 async def analyze_image(file: UploadFile = File(...)):
