@@ -69,86 +69,54 @@ function PlantInfo({ data }) {
         </CardContent>
       </Card>
 
-      {/* ✅ แสดงต้นไม้ที่คล้ายกัน */}
-      <Typography variant="h5" fontWeight={700} mt={5}>
-        🌿 ต้นไม้ที่คล้ายกัน
-      </Typography>
-      <Grid container spacing={3} mt={2} justifyContent="center">
-        {data.similar_plants && data.similar_plants.length > 0 ? (
-          data.similar_plants.map((plant, index) => (
-            <Grid item xs={12} sm={6} md={4} key={index}>
-              <Card
-                sx={{
-                  boxShadow: 3,
-                  borderRadius: 3,
-                  textAlign: "center",
-                  bgcolor: "white",
-                  p: 2,
-                }}
-              >
-                <CardContent>
-                  <Typography variant="h6" fontWeight={600}>
-                    {plant.name}
-                  </Typography>
-                  <img
-                    src={plant.image}
-                    alt={plant.name}
-                    style={{ width: "100%", borderRadius: 10, marginTop: 10 }}
-                  />
-                </CardContent>
-              </Card>
-            </Grid>
-          ))
-        ) : (
-          <Alert severity="info" sx={{ mt: 2, width: "100%" }}>
-            ไม่มีข้อมูลต้นไม้ที่คล้ายกัน
-          </Alert>
-        )}
-      </Grid>
-
       {/* ✅ แสดงร้านค้าที่แนะนำ */}
-      <Typography variant="h5" fontWeight={700} mt={5}>
-        🏪 ร้านค้าที่แนะนำ
-      </Typography>
-      <Grid container spacing={3} mt={2} justifyContent="center">
-        {data.shops && data.shops.length > 0 ? (
-          data.shops.map((shop, index) => (
-            <Grid item xs={12} sm={6} md={4} key={index}>
-              <Card
-                sx={{
-                  boxShadow: 3,
-                  borderRadius: 3,
-                  textAlign: "center",
-                  bgcolor: "white",
-                  p: 2,
-                }}
-              >
-                <CardContent>
-                  <Typography variant="h6" fontWeight={600}>
-                    {shop.name}
-                  </Typography>
-                  <Typography color="textSecondary">
-                    💰 ราคา: {shop.price} บาท
-                  </Typography>
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    href={shop.link}
-                    target="_blank"
-                    sx={{ mt: 2 }}
-                  >
-                    🛒 สั่งซื้อเลย
-                  </Button>
-                </CardContent>
-              </Card>
-            </Grid>
-          ))
-        ) : (
-          <Alert severity="info" sx={{ mt: 2, width: "100%" }}>
-            ไม่มีข้อมูลร้านค้าที่แนะนำ
-          </Alert>
-        )}
-      </Grid>
+      {data.shops && data.shops.length > 0 && (
+        <>
+          <Typography variant="h5" fontWeight={700} mt={5}>
+            🏪 ร้านค้าที่แนะนำ
+          </Typography>
+          <Grid container spacing={3} mt={2} justifyContent="center">
+            {data.shops.map((shop, index) => (
+              <Grid item xs={12} sm={6} md={4} key={index}>
+                <Card
+                  sx={{
+                    boxShadow: 3,
+                    borderRadius: 3,
+                    textAlign: "center",
+                    bgcolor: "white",
+                    p: 2,
+                  }}
+                >
+                  <CardContent>
+                    <Typography variant="h6" fontWeight={600}>
+                      {shop.name}
+                    </Typography>
+                    <Typography color="textSecondary">
+                      💰 ราคา: {shop.price} บาท
+                    </Typography>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      href={shop.link}
+                      target="_blank"
+                      sx={{ mt: 2 }}
+                    >
+                      🛒 สั่งซื้อเลย
+                    </Button>
+                  </CardContent>
+                </Card>
+              </Grid>
+            ))}
+          </Grid>
+        </>
+      )}
+
+      {/* ✅ แจ้งเตือนถ้าไม่มีร้านค้า */}
+      {(!data.shops || data.shops.length === 0) && (
+        <Alert severity="info" sx={{ mt: 2, width: "100%" }}>
+          ไม่มีข้อมูลร้านค้าที่แนะนำ
+        </Alert>
+      )}
     </Box>
   );
 }
@@ -161,12 +129,6 @@ PlantInfo.propTypes = {
       care_level: PropTypes.string,
     }),
     price_range: PropTypes.string,
-    similar_plants: PropTypes.arrayOf(
-      PropTypes.shape({
-        name: PropTypes.string,
-        image: PropTypes.string,
-      })
-    ),
     shops: PropTypes.arrayOf(
       PropTypes.shape({
         name: PropTypes.string,
