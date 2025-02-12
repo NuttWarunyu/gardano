@@ -7,20 +7,23 @@ import {
   CardContent,
   Button,
   Box,
+  Chip,
+  Avatar,
+  Divider,
 } from "@mui/material";
 import { getAffiliates, trackClick } from "../api/affiliate";
 
-// ✅ แสดงร้านค้า Affiliate
-export function AffiliateShops() {
+// ✅ แสดงร้านค้า Affiliate ที่แนะนำ
+export function AffiliateShops({ plantName }) {
   const [affiliates, setAffiliates] = useState([]);
 
   useEffect(() => {
     async function fetchAffiliates() {
-      const data = await getAffiliates();
+      const data = await getAffiliates(plantName);
       setAffiliates(data);
     }
     fetchAffiliates();
-  }, []);
+  }, [plantName]);
 
   const handleClick = async (id, url) => {
     await trackClick(id);
@@ -30,7 +33,7 @@ export function AffiliateShops() {
   return (
     <div>
       <Typography variant="h5" fontWeight={700} mt={5}>
-        🏪 ร้านค้าพันธมิตร
+        🏪 ดีลพิเศษจากร้านค้าพันธมิตร
       </Typography>
       <Grid container spacing={3} mt={2} justifyContent="center">
         {affiliates.map((shop) => (
@@ -45,14 +48,21 @@ export function AffiliateShops() {
               }}
             >
               <CardContent>
+                <Avatar
+                  src={shop.logo}
+                  sx={{ width: 56, height: 56, mx: "auto", mb: 1 }}
+                />
                 <Typography variant="h6" fontWeight={600}>
                   {shop.store_name}
+                </Typography>
+                <Typography color="textSecondary" fontSize="1rem">
+                  💰 เริ่มต้น {shop.price} บาท
                 </Typography>
                 <Button
                   variant="contained"
                   color="primary"
                   onClick={() => handleClick(shop.id, shop.affiliate_url)}
-                  sx={{ mt: 1 }}
+                  sx={{ mt: 1, borderRadius: 20, px: 3 }}
                 >
                   🛒 ซื้อเลย
                 </Button>
@@ -65,68 +75,37 @@ export function AffiliateShops() {
   );
 }
 
-// ✅ ฟังก์ชันตัดเฉพาะชื่อพืช
-function extractPlantName(text) {
-  const match = text.match(/"([^"]+)"/);
-  return match ? match[1] : text.split(" ")[0];
-}
-
-// ✅ กำหนดสีระดับการดูแล
-function getCareColor(level) {
-  if (level === "ง่าย") return "#4CAF50"; // เขียว
-  if (level === "ปานกลาง") return "#FF9800"; // ส้ม
-  return "#F44336"; // แดง
-}
-
-// ✅ แสดงข้อมูลพืช
+// ✅ แสดงข้อมูลพืชและรายละเอียด
 export function PlantInfo({ data }) {
-  // ✅ ถ้าไม่มีร้านค้า ให้ใส่ข้อมูลสมมุติ
-  const shopData =
-    data.shops && data.shops.length > 0
-      ? data.shops
-      : [
-          {
-            name: "🌿 สวนต้นไม้สุขใจ",
-            price: "250",
-            link: "https://example.com/shop1",
-          },
-          {
-            name: "🌳 Green Leaf Garden",
-            price: "320",
-            link: "https://example.com/shop2",
-          },
-          {
-            name: "🌼 ร้านต้นไม้เมืองนนท์",
-            price: "180",
-            link: "https://example.com/shop3",
-          },
-        ];
-
   return (
     <Box mt={5}>
       <Card sx={{ boxShadow: 5, borderRadius: 5, bgcolor: "white", p: 3 }}>
         <CardContent>
-          {/* ✅ แสดงชื่อพืชแบบ Minimal */}
-          <Typography
-            variant="h3"
-            fontWeight={800}
-            gutterBottom
-            sx={{ fontFamily: '"Inter", sans-serif' }}
-          >
-            {extractPlantName(data.plant_name)}
+          {/* ✅ ชื่อพืช */}
+          <Typography variant="h3" fontWeight={800} gutterBottom>
+            {data.plant_name}
           </Typography>
 
-          {/* ✅ ระดับการดูแล */}
-          <Typography variant="h6" fontWeight={600} mt={2}>
-            🌿 ระดับการดูแล:{" "}
-            <span
-              style={{
-                color: getCareColor(data.care_level),
-                fontWeight: "bold",
-              }}
-            >
-              {data.care_level || "ไม่ระบุ"}
-            </span>
+          {/* ✅ ประเภทพืช */}
+          <Typography variant="h6" fontWeight={600} mt={1}>
+            🌱 ประเภท:{" "}
+            <Chip label={data.category} color="success" variant="outlined" />
+          </Typography>
+
+          {/* ✅ การดูแล */}
+          <Typography variant="h6" fontWeight={600} mt={1}>
+            🛠️ การดูแล:{" "}
+            <Chip label={data.care_level} color="info" variant="outlined" />
+          </Typography>
+
+          {/* ✅ ความสูงเฉลี่ย */}
+          <Typography variant="h6" fontWeight={600} mt={1}>
+            📏 ความสูงเฉลี่ย:{" "}
+            <Chip
+              label={`${data.average_height} ซม.`}
+              color="secondary"
+              variant="outlined"
+            />
           </Typography>
 
           {/* ✅ ราคาประมาณ */}
@@ -139,55 +118,13 @@ export function PlantInfo({ data }) {
           >
             💰 ราคาโดยประมาณ: {data.price_range}
           </Typography>
+
+          <Divider sx={{ my: 3 }} />
+
+          {/* ✅ ร้านค้าที่แนะนำ */}
+          <AffiliateShops plantName={data.plant_name} />
         </CardContent>
       </Card>
-
-      {/* ✅ ร้านค้าแบบ Grid ที่ดูโมเดิร์น */}
-      <Typography variant="h5" fontWeight={700} mt={5}>
-        🏪 ร้านค้าที่แนะนำ
-      </Typography>
-      <Grid container spacing={3} mt={2} justifyContent="center">
-        {shopData.map((shop, index) => (
-          <Grid item xs={12} sm={6} md={4} key={index}>
-            <Card
-              sx={{
-                boxShadow: 3,
-                borderRadius: 3,
-                textAlign: "center",
-                bgcolor: "white",
-                p: 2,
-                transition: "0.3s",
-                "&:hover": { transform: "scale(1.05)", boxShadow: 6 },
-              }}
-            >
-              <CardContent>
-                <Typography variant="h6" fontWeight={600}>
-                  {shop.name}
-                </Typography>
-                <Typography color="textSecondary">
-                  💰 ราคา: {shop.price} บาท
-                </Typography>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  href={shop.link}
-                  target="_blank"
-                  sx={{
-                    mt: 2,
-                    fontSize: "0.9rem",
-                    borderRadius: 20,
-                    px: 3,
-                    bgcolor: "#007AFF",
-                    "&:hover": { bgcolor: "#005ECF" },
-                  }}
-                >
-                  🛒 สั่งซื้อเลย
-                </Button>
-              </CardContent>
-            </Card>
-          </Grid>
-        ))}
-      </Grid>
     </Box>
   );
 }
@@ -196,14 +133,13 @@ export function PlantInfo({ data }) {
 PlantInfo.propTypes = {
   data: PropTypes.shape({
     plant_name: PropTypes.string.isRequired,
+    category: PropTypes.string.isRequired,
     care_level: PropTypes.string.isRequired,
+    average_height: PropTypes.string.isRequired,
     price_range: PropTypes.string.isRequired,
-    shops: PropTypes.arrayOf(
-      PropTypes.shape({
-        name: PropTypes.string.isRequired,
-        price: PropTypes.string.isRequired,
-        link: PropTypes.string.isRequired,
-      })
-    ),
   }).isRequired,
+};
+
+AffiliateShops.propTypes = {
+  plantName: PropTypes.string.isRequired,
 };

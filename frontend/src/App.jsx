@@ -7,17 +7,17 @@ import {
   CardContent,
   Button,
   Box,
+  Alert,
 } from "@mui/material";
 import FileUpload from "./components/FileUpload";
 import PropTypes from "prop-types";
 
-// ✅ ตัดเฉพาะชื่อพืช
+// ✅ ฟังก์ชันช่วยในการแสดงผลข้อมูล
 function extractPlantName(text) {
   const match = text.match(/"([^"]+)"/);
   return match ? match[1] : text.split(" ")[0];
 }
 
-// ✅ กำหนดสีระดับการดูแล
 function getCareColor(level) {
   if (level === "ง่าย") return "#4CAF50"; // เขียว
   if (level === "ปานกลาง") return "#FF9800"; // ส้ม
@@ -30,207 +30,148 @@ export default function App() {
   return (
     <Container
       maxWidth="lg"
-      sx={{
-        py: 5,
-        textAlign: "center",
-        bgcolor: "#F5F5F7",
-        fontFamily: '"Inter", sans-serif',
-      }}
+      sx={{ py: 5, textAlign: "center", bgcolor: "#F5F5F7" }}
     >
       <Typography variant="h3" fontWeight={700} gutterBottom>
         🌱 ระบบวิเคราะห์พืชจากภาพ
       </Typography>
-
       <FileUpload onFileSelect={() => {}} setResult={setResult} />
-
       {result && <PlantInfo data={result} />}
     </Container>
   );
 }
 
 function PlantInfo({ data }) {
-  // ✅ ถ้าไม่มีร้านค้า ให้ใช้ข้อมูลสมมุติ
-  const shopData =
-    data.shops && data.shops.length > 0
-      ? data.shops
-      : [
-          {
-            name: "🌿 สวนต้นไม้สุขใจ",
-            price: "250",
-            link: "https://example.com/shop1",
-          },
-          {
-            name: "🌳 Green Leaf Garden",
-            price: "320",
-            link: "https://example.com/shop2",
-          },
-          {
-            name: "🌼 ร้านต้นไม้เมืองนนท์",
-            price: "180",
-            link: "https://example.com/shop3",
-          },
-        ];
-
-  // ✅ ถ้าไม่มีต้นไม้ใกล้เคียง ให้ใช้ข้อมูลสมมุติ
-  const similarPlants =
-    data.similar_plants && data.similar_plants.length > 0
-      ? data.similar_plants
-      : [
-          {
-            name: "ฟิโลเดนดรอน",
-            image: "https://source.unsplash.com/200x150/?plant",
-          },
-          {
-            name: "มอนสเตอร่า",
-            image: "https://source.unsplash.com/200x150/?tropical",
-          },
-          {
-            name: "ลิ้นมังกร",
-            image: "https://source.unsplash.com/200x150/?green",
-          },
-        ];
-
   return (
     <Box mt={5}>
+      {/* ✅ แสดงข้อมูลพื้นฐานของพืช */}
       <Card sx={{ boxShadow: 5, borderRadius: 5, bgcolor: "white", p: 3 }}>
         <CardContent>
-          {/* ✅ แสดงชื่อพืช */}
           <Typography variant="h3" fontWeight={800} gutterBottom>
-            {extractPlantName(data.plant_name)}
+            {data.plant_name
+              ? extractPlantName(data.plant_name)
+              : "ไม่พบข้อมูล"}
           </Typography>
-
-          {/* ✅ ระดับการดูแล */}
           <Typography variant="h6" fontWeight={600} mt={2}>
             🌿 ระดับการดูแล:{" "}
             <span
               style={{
-                color: getCareColor(data.care.care_level),
+                color: getCareColor(data.care?.care_level || "ไม่ระบุ"),
                 fontWeight: "bold",
               }}
             >
-              {data.care.care_level || "ไม่ระบุ"}
+              {data.care?.care_level || "ไม่ระบุ"}
             </span>
           </Typography>
-
-          {/* ✅ ราคาประมาณ */}
-          <Typography
-            variant="h5"
-            color="primary"
-            fontWeight={700}
-            mt={2}
-            sx={{ fontSize: "1.8rem" }}
-          >
-            💰 ราคาโดยประมาณ: {data.price_range}
+          <Typography variant="h5" color="primary" fontWeight={700} mt={2}>
+            💰 ราคาโดยประมาณ: {data.price_range || "ไม่พบข้อมูลราคา"}
           </Typography>
         </CardContent>
       </Card>
 
-      {/* ✅ ต้นไม้ที่คล้ายกัน */}
+      {/* ✅ แสดงต้นไม้ที่คล้ายกัน */}
       <Typography variant="h5" fontWeight={700} mt={5}>
         🌿 ต้นไม้ที่คล้ายกัน
       </Typography>
       <Grid container spacing={3} mt={2} justifyContent="center">
-        {similarPlants.map((plant, index) => (
-          <Grid item xs={12} sm={6} md={4} key={index}>
-            <Card
-              sx={{
-                boxShadow: 3,
-                borderRadius: 3,
-                textAlign: "center",
-                bgcolor: "white",
-                p: 2,
-                transition: "0.3s",
-                "&:hover": { transform: "scale(1.05)", boxShadow: 6 },
-              }}
-            >
-              <CardContent>
-                <Typography variant="h6" fontWeight={600}>
-                  {plant.name}
-                </Typography>
-                <img
-                  src={plant.image}
-                  alt={plant.name}
-                  style={{
-                    width: "100%",
-                    borderRadius: 10,
-                    marginTop: 10,
-                  }}
-                />
-              </CardContent>
-            </Card>
-          </Grid>
-        ))}
+        {data.similar_plants && data.similar_plants.length > 0 ? (
+          data.similar_plants.map((plant, index) => (
+            <Grid item xs={12} sm={6} md={4} key={index}>
+              <Card
+                sx={{
+                  boxShadow: 3,
+                  borderRadius: 3,
+                  textAlign: "center",
+                  bgcolor: "white",
+                  p: 2,
+                }}
+              >
+                <CardContent>
+                  <Typography variant="h6" fontWeight={600}>
+                    {plant.name}
+                  </Typography>
+                  <img
+                    src={plant.image}
+                    alt={plant.name}
+                    style={{ width: "100%", borderRadius: 10, marginTop: 10 }}
+                  />
+                </CardContent>
+              </Card>
+            </Grid>
+          ))
+        ) : (
+          <Alert severity="info" sx={{ mt: 2, width: "100%" }}>
+            ไม่มีข้อมูลต้นไม้ที่คล้ายกัน
+          </Alert>
+        )}
       </Grid>
 
-      {/* ✅ ร้านค้า */}
+      {/* ✅ แสดงร้านค้าที่แนะนำ */}
       <Typography variant="h5" fontWeight={700} mt={5}>
         🏪 ร้านค้าที่แนะนำ
       </Typography>
       <Grid container spacing={3} mt={2} justifyContent="center">
-        {shopData.map((shop, index) => (
-          <Grid item xs={12} sm={6} md={4} key={index}>
-            <Card
-              sx={{
-                boxShadow: 3,
-                borderRadius: 3,
-                textAlign: "center",
-                bgcolor: "white",
-                p: 2,
-                transition: "0.3s",
-                "&:hover": { transform: "scale(1.05)", boxShadow: 6 },
-              }}
-            >
-              <CardContent>
-                <Typography variant="h6" fontWeight={600}>
-                  {shop.name}
-                </Typography>
-                <Typography color="textSecondary">
-                  💰 ราคา: {shop.price} บาท
-                </Typography>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  href={shop.link}
-                  target="_blank"
-                  sx={{
-                    mt: 2,
-                    fontSize: "0.9rem",
-                    borderRadius: 20,
-                    px: 3,
-                    bgcolor: "#007AFF",
-                    "&:hover": { bgcolor: "#005ECF" },
-                  }}
-                >
-                  🛒 สั่งซื้อเลย
-                </Button>
-              </CardContent>
-            </Card>
-          </Grid>
-        ))}
+        {data.shops && data.shops.length > 0 ? (
+          data.shops.map((shop, index) => (
+            <Grid item xs={12} sm={6} md={4} key={index}>
+              <Card
+                sx={{
+                  boxShadow: 3,
+                  borderRadius: 3,
+                  textAlign: "center",
+                  bgcolor: "white",
+                  p: 2,
+                }}
+              >
+                <CardContent>
+                  <Typography variant="h6" fontWeight={600}>
+                    {shop.name}
+                  </Typography>
+                  <Typography color="textSecondary">
+                    💰 ราคา: {shop.price} บาท
+                  </Typography>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    href={shop.link}
+                    target="_blank"
+                    sx={{ mt: 2 }}
+                  >
+                    🛒 สั่งซื้อเลย
+                  </Button>
+                </CardContent>
+              </Card>
+            </Grid>
+          ))
+        ) : (
+          <Alert severity="info" sx={{ mt: 2, width: "100%" }}>
+            ไม่มีข้อมูลร้านค้าที่แนะนำ
+          </Alert>
+        )}
       </Grid>
     </Box>
   );
 }
 
-// ✅ เพิ่ม PropTypes
+// ✅ กำหนด PropTypes ให้ถูกต้อง
 PlantInfo.propTypes = {
   data: PropTypes.shape({
-    plant_name: PropTypes.string.isRequired,
+    plant_name: PropTypes.string,
     care: PropTypes.shape({
-      care_level: PropTypes.string.isRequired,
-    }).isRequired,
-    price_range: PropTypes.string.isRequired,
+      care_level: PropTypes.string,
+    }),
+    price_range: PropTypes.string,
     similar_plants: PropTypes.arrayOf(
       PropTypes.shape({
-        name: PropTypes.string.isRequired,
-        image: PropTypes.string.isRequired,
+        name: PropTypes.string,
+        image: PropTypes.string,
       })
     ),
     shops: PropTypes.arrayOf(
       PropTypes.shape({
-        name: PropTypes.string.isRequired,
-        price: PropTypes.string.isRequired,
-        link: PropTypes.string.isRequired,
+        name: PropTypes.string,
+        price: PropTypes.string,
+        link: PropTypes.string,
       })
     ),
   }).isRequired,
