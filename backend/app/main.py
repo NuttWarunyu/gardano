@@ -1,16 +1,19 @@
+import os
+import openai
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.routes import analyze, affiliate  # ✅ โหลด Routes
+from app.routes import analyze, affiliate  # ✅ แยก Route ออกไป
 
+# ✅ สร้าง FastAPI App ก่อน
 app = FastAPI()
 
-# ✅ อนุญาตให้ Frontend ใช้งาน API
+# ✅ เปิดให้ Frontend ใช้งาน API
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "http://localhost:5173",  
-        "https://gardano-frontend.onrender.com"  # ✅ เพิ่ม URL ของ Render
-    ],  
+        "http://localhost:5173",  # ✅ รองรับ Frontend บน Localhost
+        "https://gardano-frontend.onrender.com",  # ✅ รองรับ Frontend ที่ Render
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

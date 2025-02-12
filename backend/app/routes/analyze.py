@@ -6,14 +6,10 @@ from PIL import Image
 from app.config import OPENAI_API_KEY
 from app.database import get_plant_shop_data  # ✅ ดึงข้อมูลร้านค้า
 
-shop_info = get_plant_shop_data()
-
 router = APIRouter()
 
-import os
-import openai
-
 # ✅ ดึง API Key จาก Environment
+import os
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
 if not OPENAI_API_KEY:
@@ -21,8 +17,6 @@ if not OPENAI_API_KEY:
 
 # ✅ ตั้งค่า API Key ให้ OpenAI Client
 openai.api_key = OPENAI_API_KEY
-
-# ✅ สร้าง OpenAI Client
 client = openai.OpenAI()
 
 @router.post("/analyze/")
@@ -38,37 +32,30 @@ async def analyze_image(file: UploadFile = File(...)):
         response = client.chat.completions.create(
             model="gpt-4o",
             messages=[
-                {"role": "system", "content": "คุณเป็นผู้เชี่ยวชาญด้านพฤกษศาสตร์ ระบุชื่อพืชจากภาพ"},
+                {"role": "system", "content": "คุณเป็นผู้เชี่ยวชาญด้านพฤกษศาสตร์ ระบุชื่อพืชจากภาพ และให้ข้อมูลเกี่ยวกับการดูแล"},
                 {
                     "role": "user",
                     "content": [
-                        {"type": "text", "text": "โปรดวิเคราะห์และระบุชื่อพืชในภาพนี้"},
+                        {"type": "text", "text": "โปรดวิเคราะห์และระบุชื่อพืชในภาพนี้ พร้อมระดับการดูแล"},
                         {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{base64_image}"}}
                     ]
                 }
             ]
         )
 
-        plant_name = response.choices[0].message.content.strip()
+        # ✅ ดึงค่าจาก OpenAI
+        plant_info = response.choices[0].message.content.strip().split("\n")
 
-        # ✅ ค้นหาข้อมูลจากฐานข้อมูล
+        plant_name = plant_info[0]  # สมมติ OpenAI ตอบชื่อพืชในบรรทัดแรก
+        care_level = plant_info[1] if len(plant_info) > 1 else "ไม่ระบุ"  # ระดับการดูแล (ถ้ามี)
+
+        # ✅ ค้นหาข้อมูลร้านค้า
         shop_info = get_plant_shop_data(plant_name)
-
-        # ✅ แนะนำพืชที่คล้ายกัน (ข้อมูลจำลอง)
-        similar_plants = [
-            {"name": "เดหลี", "image": "https://source.unsplash.com/200x150/?spathiphyllum"},
-            {"name": "สาวน้อยประแป้ง", "image": "https://source.unsplash.com/200x150/?aglaonema"},
-            {"name": "เฟิร์นขนนก", "image": "https://source.unsplash.com/200x150/?asparagus"}
-        ]
-
-        # ✅ ประเมินระดับการดูแล
-        care_info = {"care_level": "ง่าย" if "เดหลี" in plant_name else "ปานกลาง"}
 
         return {
             "plant_name": plant_name,
-            "care": care_info,
-            "price_range": "150-400 บาท",
-            "similar_plants": similar_plants,
+            "care": {"care_level": care_level},
+            "price_range": "ไม่ระบุ",  # ✅ เปลี่ยนจาก mock data เป็นค่าที่จะเพิ่มในอนาคต
             "shops": shop_info
         }
 
