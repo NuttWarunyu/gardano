@@ -17,12 +17,13 @@ openai.api_key = OPENAI_API_KEY
 # ✅ สร้าง FastAPI App
 app = FastAPI()
 
-# ✅ เปิดให้ Frontend ใช้งาน API
+# ✅ อัปเดต CORS ให้รองรับทั้ง `localhost` และ `Render`
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "http://localhost:5173",  
-        "https://gardano-frontend.onrender.com"  # ✅ เพิ่ม URL ของ frontend ที่ Render
+        "http://localhost:5173",  # ✅ Vite
+        "http://localhost:3000",  # ✅ React Dev Server
+        "https://gardano-frontend.onrender.com"  # ✅ Frontend บน Render
     ],  
     allow_credentials=True,
     allow_methods=["*"],
