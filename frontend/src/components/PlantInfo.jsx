@@ -1,130 +1,95 @@
-import { useState, useEffect } from "react";
-import PropTypes from "prop-types";
 import {
-  Typography,
-  Grid,
   Card,
   CardContent,
-  Button,
+  CardMedia, // ✅ ใช้ CardMedia แสดงภาพ
+  Typography,
+  Grid,
   Box,
-  Chip,
-  Avatar,
-  Divider,
+  Button,
+  Divider, // ✅ ใช้ Divider คั่นเนื้อหา
+  Alert,
 } from "@mui/material";
-import { getAffiliates, trackClick } from "../api/affiliate";
+import PropTypes from "prop-types";
 
-// ✅ แสดงร้านค้า Affiliate ที่แนะนำ
-export function AffiliateShops({ plantName }) {
-  const [affiliates, setAffiliates] = useState([]);
-
-  useEffect(() => {
-    async function fetchAffiliates() {
-      const data = await getAffiliates(plantName);
-      setAffiliates(data);
-    }
-    fetchAffiliates();
-  }, [plantName]);
-
-  const handleClick = async (id, url) => {
-    await trackClick(id);
-    window.open(url, "_blank");
-  };
-
-  return (
-    <div>
-      <Typography variant="h5" fontWeight={700} mt={5}>
-        🏪 ดีลพิเศษจากร้านค้าพันธมิตร
-      </Typography>
-      <Grid container spacing={3} mt={2} justifyContent="center">
-        {affiliates.map((shop) => (
-          <Grid item xs={12} sm={6} md={4} key={shop.id}>
-            <Card
-              sx={{
-                boxShadow: 3,
-                borderRadius: 3,
-                textAlign: "center",
-                bgcolor: "white",
-                p: 2,
-              }}
-            >
-              <CardContent>
-                <Avatar
-                  src={shop.logo}
-                  sx={{ width: 56, height: 56, mx: "auto", mb: 1 }}
-                />
-                <Typography variant="h6" fontWeight={600}>
-                  {shop.store_name}
-                </Typography>
-                <Typography color="textSecondary" fontSize="1rem">
-                  💰 เริ่มต้น {shop.price} บาท
-                </Typography>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={() => handleClick(shop.id, shop.affiliate_url)}
-                  sx={{ mt: 1, borderRadius: 20, px: 3 }}
-                >
-                  🛒 ซื้อเลย
-                </Button>
-              </CardContent>
-            </Card>
-          </Grid>
-        ))}
-      </Grid>
-    </div>
-  );
-}
-
-// ✅ แสดงข้อมูลพืชและรายละเอียด
-export function PlantInfo({ data }) {
+export default function PlantInfo({ data }) {
   return (
     <Box mt={5}>
+      {/* ✅ แสดงข้อมูลพื้นฐานของพืช */}
       <Card sx={{ boxShadow: 5, borderRadius: 5, bgcolor: "white", p: 3 }}>
+        {/* ✅ เพิ่ม CardMedia สำหรับแสดงภาพ */}
+        {data.image && (
+          <CardMedia
+            component="img"
+            height="200"
+            image={data.image}
+            alt={data.plant_name}
+            sx={{ borderRadius: 2 }}
+          />
+        )}
+
         <CardContent>
-          {/* ✅ ชื่อพืช */}
           <Typography variant="h3" fontWeight={800} gutterBottom>
-            {data.plant_name}
+            {data.plant_name || "ไม่พบข้อมูล"}
           </Typography>
 
-          {/* ✅ ประเภทพืช */}
-          <Typography variant="h6" fontWeight={600} mt={1}>
-            🌱 ประเภท:{" "}
-            <Chip label={data.category} color="success" variant="outlined" />
+          {/* ✅ แสดง Divider คั่นเนื้อหา */}
+          <Divider sx={{ my: 2 }} />
+
+          <Typography variant="h6" fontWeight={600} mt={2}>
+            🌿 ระดับการดูแล: {data.care?.care_level || "ไม่ระบุ"}
           </Typography>
 
-          {/* ✅ การดูแล */}
-          <Typography variant="h6" fontWeight={600} mt={1}>
-            🛠️ การดูแล:{" "}
-            <Chip label={data.care_level} color="info" variant="outlined" />
+          <Typography variant="h5" color="primary" fontWeight={700} mt={2}>
+            💰 ราคาโดยประมาณ: {data.price_range || "ไม่พบข้อมูลราคา"}
           </Typography>
-
-          {/* ✅ ความสูงเฉลี่ย */}
-          <Typography variant="h6" fontWeight={600} mt={1}>
-            📏 ความสูงเฉลี่ย:{" "}
-            <Chip
-              label={`${data.average_height} ซม.`}
-              color="secondary"
-              variant="outlined"
-            />
-          </Typography>
-
-          {/* ✅ ราคาประมาณ */}
-          <Typography
-            variant="h5"
-            color="primary"
-            fontWeight={700}
-            mt={2}
-            sx={{ fontSize: "1.8rem" }}
-          >
-            💰 ราคาโดยประมาณ: {data.price_range}
-          </Typography>
-
-          <Divider sx={{ my: 3 }} />
-
-          {/* ✅ ร้านค้าที่แนะนำ */}
-          <AffiliateShops plantName={data.plant_name} />
         </CardContent>
       </Card>
+
+      {/* ✅ แสดงร้านค้าที่แนะนำ */}
+      {data.shops && data.shops.length > 0 ? (
+        <>
+          <Typography variant="h5" fontWeight={700} mt={5}>
+            🏪 ร้านค้าที่แนะนำ
+          </Typography>
+          <Grid container spacing={3} mt={2} justifyContent="center">
+            {data.shops.map((shop, index) => (
+              <Grid item xs={12} sm={6} md={4} key={index}>
+                <Card
+                  sx={{
+                    boxShadow: 3,
+                    borderRadius: 3,
+                    textAlign: "center",
+                    bgcolor: "white",
+                    p: 2,
+                  }}
+                >
+                  <CardContent>
+                    <Typography variant="h6" fontWeight={600}>
+                      {shop.name}
+                    </Typography>
+                    <Typography color="textSecondary">
+                      💰 ราคา: {shop.price} บาท
+                    </Typography>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      href={shop.link}
+                      target="_blank"
+                      sx={{ mt: 2 }}
+                    >
+                      🛒 สั่งซื้อเลย
+                    </Button>
+                  </CardContent>
+                </Card>
+              </Grid>
+            ))}
+          </Grid>
+        </>
+      ) : (
+        <Alert severity="info" sx={{ mt: 2, width: "100%" }}>
+          ไม่มีข้อมูลร้านค้าที่แนะนำ
+        </Alert>
+      )}
     </Box>
   );
 }
@@ -132,14 +97,18 @@ export function PlantInfo({ data }) {
 // ✅ PropTypes
 PlantInfo.propTypes = {
   data: PropTypes.shape({
-    plant_name: PropTypes.string.isRequired,
-    category: PropTypes.string.isRequired,
-    care_level: PropTypes.string.isRequired,
-    average_height: PropTypes.string.isRequired,
-    price_range: PropTypes.string.isRequired,
+    plant_name: PropTypes.string,
+    image: PropTypes.string,
+    care: PropTypes.shape({
+      care_level: PropTypes.string,
+    }),
+    price_range: PropTypes.string,
+    shops: PropTypes.arrayOf(
+      PropTypes.shape({
+        name: PropTypes.string,
+        price: PropTypes.string,
+        link: PropTypes.string,
+      })
+    ),
   }).isRequired,
-};
-
-AffiliateShops.propTypes = {
-  plantName: PropTypes.string.isRequired,
 };
