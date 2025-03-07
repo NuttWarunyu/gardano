@@ -1,13 +1,16 @@
-# ✅ ใช้ Base Image ที่มี Python และ pip ติดตั้งมาแล้ว
+# ✅ ใช้ Python Base Image ที่มี pip ติดตั้งแล้ว
 FROM python:3.10-slim
 
-# ตั้งค่า directory ทำงาน
+# ตั้งค่าตำแหน่งทำงานใน Container
 WORKDIR /app
 
 # คัดลอกไฟล์ทั้งหมดไปที่ Container
-COPY . /app/.
+COPY . /app/
 
-# ✅ ใช้ python -m pip เพื่อให้แน่ใจว่า pip ใช้งานได้
+# ✅ ติดตั้ง pip (ใช้ `python -m pip` เพื่อให้แน่ใจว่ามี pip)
+RUN apt-get update && apt-get install -y python3-pip
+
+# ✅ อัปเกรด pip
 RUN python -m pip install --upgrade pip
 
 # ✅ ติดตั้ง dependencies จาก `requirements.txt`
