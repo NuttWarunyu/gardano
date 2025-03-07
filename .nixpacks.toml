@@ -1,2 +1,12 @@
 [phases.setup]
-enabled = false
+nixPkgs = ["python311"]
+
+[phases.build]
+cmds = [
+  "pip install --upgrade pip",
+  "pip install -r backend/requirements.txt",
+  "pip install uvicorn" # ✅ เพิ่มการติดตั้ง uvicorn
+]
+
+[start]
+cmd = "cd backend && python -m uvicorn app.main:app --host 0.0.0.0 --port $PORT"  # ✅ รันแบบ python -m uvicorn
