@@ -1,9 +1,7 @@
 import os
 from dotenv import load_dotenv
 
-# ✅ โหลดไฟล์ .env
-dotenv_path = os.path.join(os.path.dirname(__file__), "../.env")  # ตรวจสอบตำแหน่งไฟล์ .env
-load_dotenv(dotenv_path)
+load_dotenv()  # โหลดค่าจาก .env (ใช้ตอนรันบนเครื่อง Local เท่านั้น)
 
-# ✅ อ่านค่า OPENAI_API_KEY จาก .env
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")  # Railway จะดึงค่าจาก Environment Variables
+DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./database.db")  # ค่า Default
