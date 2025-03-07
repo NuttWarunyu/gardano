@@ -5,11 +5,11 @@ FROM python:3.11
 WORKDIR /app
 
 # ✅ คัดลอกไฟล์ทั้งหมดเข้า Container
-COPY . /app/
+COPY . .
 
 # ✅ ติดตั้ง Dependencies
 RUN pip install --upgrade pip
-RUN pip install -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
-# ✅ รัน FastAPI
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+# ✅ รัน FastAPI (ใช้ python -m uvicorn แทน)
+CMD ["python", "-m", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
