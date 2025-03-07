@@ -1,5 +1,5 @@
-# ใช้ Python base image ที่รองรับ pip
-FROM python:3.10
+# ✅ ใช้ Base Image ที่มี Python และ pip ติดตั้งมาแล้ว
+FROM python:3.10-slim
 
 # ตั้งค่า directory ทำงาน
 WORKDIR /app
@@ -7,7 +7,7 @@ WORKDIR /app
 # คัดลอกไฟล์ทั้งหมดไปที่ Container
 COPY . /app/.
 
-# ✅ ติดตั้ง pip ก่อนใช้
+# ✅ ใช้ python -m pip เพื่อให้แน่ใจว่า pip ใช้งานได้
 RUN python -m pip install --upgrade pip
 
 # ✅ ติดตั้ง dependencies จาก `requirements.txt`
