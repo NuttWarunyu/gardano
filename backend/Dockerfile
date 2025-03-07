@@ -1,18 +1,20 @@
-# ✅ ใช้ Python official image เป็น base
+# ใช้ Python base image ที่รองรับ pip
 FROM python:3.10
 
-# ✅ กำหนด working directory เป็น /app
+# ตั้งค่า directory ทำงาน
 WORKDIR /app
 
-# ✅ คัดลอกไฟล์ requirements.txt และติดตั้ง dependencies
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+# คัดลอกไฟล์ทั้งหมดไปที่ Container
+COPY . /app/.
 
-# ✅ คัดลอกโค้ดทั้งหมดเข้าไปใน container
-COPY . .
+# ✅ ติดตั้ง pip ก่อนใช้
+RUN python -m pip install --upgrade pip
 
-# ✅ เปิด port 8000 สำหรับ FastAPI
+# ✅ ติดตั้ง dependencies จาก `requirements.txt`
+RUN pip install -r backend/requirements.txt
+
+# เปิด port สำหรับ FastAPI
 EXPOSE 8000
 
-# ✅ รัน FastAPI ผ่าน Uvicorn
+# คำสั่งรัน FastAPI
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
