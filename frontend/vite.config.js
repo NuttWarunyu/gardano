@@ -7,12 +7,13 @@ export default defineConfig({
     port: 5173,
   },
   preview: {
-    allowedHosts: ["gardano-frontend.onrender.com"], // ✅ อนุญาตให้ใช้โดเมน Render
+    allowedHosts: ["gardano-production.up.railway.app"], // ✅ ใช้ URL ของ Railway หรือ Netlify
   },
   define: {
     "import.meta.env.VITE_API_BASE_URL": JSON.stringify(
-      "https://gardano.onrender.com"
+      "https://gardano-production.up.railway.app" // ✅ ใช้ URL ของ Backend บน Railway
     ),
   },
   plugins: [react()], // ✅ ใช้ React Plugin ของ Vite
+  base: "/", // ✅ ตั้งค่าให้เป็น root path
 });
