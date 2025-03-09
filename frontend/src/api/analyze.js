@@ -1,5 +1,5 @@
 export const analyzeImage = async (file) => {
-  const API_BASE_URL = "https://gardano.onrender.com"; // ✅ ใช้ Render API
+  const API_BASE_URL = "https://gardano-production.up.railway.app"; // หรือ URL ใหม่ที่ได้จาก Railway
 
   const formData = new FormData();
   formData.append("file", file);

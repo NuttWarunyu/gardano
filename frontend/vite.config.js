@@ -11,7 +11,7 @@ export default defineConfig({
   },
   define: {
     "import.meta.env.VITE_API_BASE_URL": JSON.stringify(
-      "https://gardano-production.up.railway.app" // ✅ ใช้ URL ของ Backend บน Railway
+      "https://gardano-production.up.railway.app/api" // ✅ ใช้ URL ของ Backend บน Railway
     ),
   },
   plugins: [react()], // ✅ ใช้ React Plugin ของ Vite
