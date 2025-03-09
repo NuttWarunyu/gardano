@@ -1,9 +1,10 @@
 [build]
   command = "npm run build"
-  publish = "frontend/build"
+  publish = "build"
 
 [[redirects]]
-  from = "/"
-  to = "/index.html"
+  from = "/api/*"
+  to = "https://gardano-production.up.railway.app/api/:splat"
   status = 200
   force = true
+  headers = { "Access-Control-Allow-Origin" = "*" }
