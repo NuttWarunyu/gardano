@@ -17,7 +17,6 @@ if not OPENAI_API_KEY:
 
 # ✅ ตั้งค่า API Key ให้ OpenAI Client
 openai.api_key = OPENAI_API_KEY
-client = openai.OpenAI()
 
 @router.post("/analyze/")
 async def analyze_image(file: UploadFile = File(...)):
@@ -29,8 +28,8 @@ async def analyze_image(file: UploadFile = File(...)):
         base64_image = base64.b64encode(image_bytes).decode("utf-8")
 
         # ✅ ใช้ Vision API ตรวจจับพืช
-        response = client.chat.completions.create(
-            model="gpt-4o",
+        response = openai.ChatCompletion.create(
+            model="gpt-4",  # ใช้ GPT-4 แทน "gpt-4o"
             messages=[
                 {"role": "system", "content": "คุณเป็นผู้เชี่ยวชาญด้านพฤกษศาสตร์ ระบุชื่อพืชจากภาพ และให้ข้อมูลเกี่ยวกับการดูแล"},
                 {
@@ -44,7 +43,7 @@ async def analyze_image(file: UploadFile = File(...)):
         )
 
         # ✅ ดึงค่าจาก OpenAI
-        plant_info = response.choices[0].message.content.strip().split("\n")
+        plant_info = response['choices'][0]['message']['content'].strip().split("\n")
 
         plant_name = plant_info[0]  # สมมติ OpenAI ตอบชื่อพืชในบรรทัดแรก
         care_level = plant_info[1] if len(plant_info) > 1 else "ไม่ระบุ"  # ระดับการดูแล (ถ้ามี)
