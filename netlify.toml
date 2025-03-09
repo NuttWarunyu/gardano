@@ -1,10 +1,11 @@
 [build]
-command = "npm run build"
-publish = "build"  # ให้มั่นใจว่า `build` โฟลเดอร์มีไฟล์ output จากการ build
+  command = "npm run build"
+  publish = "dist"  # หรือ path ที่ Netlify จะใช้ในการดึงไฟล์ build
+  functions = "netlify/functions" # ถ้าใช้ฟังก์ชันเพิ่มเติม
 
 [[redirects]]
-from = "/api/*"
-to = "https://gardano-production.up.railway.app/api/:splat"
-status = 200
-force = true
-headers = { "Access-Control-Allow-Origin" = "*" }
+  from = "/api/*"
+  to = "https://gardano-production.up.railway.app/api/:splat"
+  status = 200
+  force = true
+  headers = { "Access-Control-Allow-Origin" = "*" }
