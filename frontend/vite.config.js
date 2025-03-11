@@ -2,17 +2,17 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 
 export default defineConfig({
-  root: ".", // กำหนด root path ให้เป็นโฟลเดอร์นี้
+  root: ".", // กำหนด root path ให้เป็นโฟลเดอร์นี้ (ที่ไฟล์ public และ src อยู่)
   publicDir: "public", // ระบุให้ Vite รู้ว่า public folder อยู่ที่ไหน
   build: {
-    outDir: "dist", // output directory ที่ Vite จะใช้
+    outDir: "dist", // ตั้งค่า output directory ให้เป็น dist
     rollupOptions: {
-      input: "public/index.html", // ระบุไฟล์ index.html ในโฟลเดอร์ public
+      input: "index.html", // ระบุไฟล์ index.html ในโฟลเดอร์ frontend
     },
   },
   server: {
     host: "0.0.0.0",
-    port: 4173,
+    port: 4173, // ใช้ port ที่ไม่มีการใช้งานอื่น
   },
   plugins: [react()],
   base: "/", // ตั้งค่าให้เป็น root path

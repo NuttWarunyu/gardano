@@ -1,15 +1,12 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App";
-import { CssBaseline, ThemeProvider, createTheme } from "@mui/material";
+import "./index.css"; // ถ้าคุณมีไฟล์ CSS
 
-const theme = createTheme();
+const root = ReactDOM.createRoot(document.getElementById("app"));
 
-ReactDOM.createRoot(document.getElementById("root")).render(
+root.render(
   <React.StrictMode>
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <App />
-    </ThemeProvider>
+    <App />
   </React.StrictMode>
 );
